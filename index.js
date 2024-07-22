@@ -27,7 +27,7 @@ const db = mysql.createConnection({
     password: process.env.MYSQL_PASS,
     database: process.env.MYSQL_DB
   });
-  
+
 db.connect(err => {
     if (err) {
         console.error('Database connection failed:', err.stack);
@@ -485,7 +485,7 @@ const sendReminderEmail = (reminder) => {
         const userTypeQuery = `
             SELECT 'Owner' AS table_name FROM Owner WHERE id = ?
             UNION
-            SELECT 'Providers' AS table_name FROM Providers WHERE id = ?
+            SELECT 'providers' AS table_name FROM providers WHERE id = ?
         `;
 
         db.query(userTypeQuery, [userId, userId], (err, results) => {
@@ -698,6 +698,7 @@ app.post('/reviews', (req, res) => {
 })
 
 //-----------------------------------------------------------------------------------------------------------------
+
 
 app.listen(port, () => {
     console.log(`Server running at http://localhost:${port}/`);
