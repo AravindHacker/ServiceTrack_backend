@@ -394,7 +394,7 @@ const nodemailer = require('nodemailer');
 // Configure nodemailer transporter
 const transporter = nodemailer.createTransport({
     service: 'gmail',
-    port: 534, // or 465 for secure SMTP
+    port: 465, 
     secure: true,
     auth: {
       user: 'malotharavind16@gmail.com',
@@ -619,7 +619,7 @@ app.post('/update-status', (req, res) => {
                     console.log('Status updated successfully');
 
                     if (status === 'completed') {
-                        sendCompletionEmail(ownerId, serviceId);
+                        sendCompletionEmail(ownerId);
                     }
 
                     res.status(200).send('Status updated successfully');
@@ -627,7 +627,7 @@ app.post('/update-status', (req, res) => {
             }
         };
 
-        const sendCompletionEmail = (ownerId, serviceId) => {
+        const sendCompletionEmail = (ownerId) => {
             // Fetch the owner's email and service details
             const ownerQuery = 'SELECT email FROM Owner WHERE id = ?';
             db.query(ownerQuery, [ownerId], (err, ownerResults) => {
@@ -642,30 +642,15 @@ app.post('/update-status', (req, res) => {
                 }
 
                 const ownerEmail = ownerResults[0].email;
-
-                // Fetch service details
-                const serviceQuery = 'SELECT * FROM Services WHERE id = ?'; // Replace with your actual service table and query
-                db.query(serviceQuery, [serviceId], (err, serviceResults) => {
-                    if (err) {
-                        console.error('Error fetching service details:', err);
-                        return res.status(500).send('Server error');
-                    }
-
-                    if (serviceResults.length === 0) {
-                        console.error('Service not found');
-                        return res.status(404).send('Service not found');
-                    }
-
-                    const serviceDetails = serviceResults[0];
-                    sendEmail(ownerEmail, serviceDetails);
-                });
+                sendEmail(ownerEmail);
+                
             });
         };
 
-        const sendEmail = (recipientEmail, serviceDetails) => {
+        const sendEmail = (recipientEmail) => {
             const transporter = nodemailer.createTransport({
                 service: 'gmail',
-                port: 465, // Correct port for SSL
+                port: 465, 
                 secure: true,
                 auth: {
                     user: 'malotharavind16@gmail.com',
