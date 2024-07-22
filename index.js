@@ -680,13 +680,9 @@ app.post('/update-status', (req, res) => {
                 text: `
                 Dear Owner,
 
-                Your service request has been completed. Please pick up your vehicle at your earliest convenience.
-
-                Service Details:
-                - Service ID: ${serviceDetails.id}
-                - Service Type: ${serviceDetails.service_type}
-                - Vehicle: ${serviceDetails.vehicle_make} ${serviceDetails.vehicle_model} (License Plate: ${serviceDetails.license_plate})
-                - Service Description: ${serviceDetails.description}
+                Your service request has been completed.
+                
+                Please pick up your vehicle at your earliest convenience.
 
                 We hope you are satisfied with our service.
                 Thank you for choosing our service!
