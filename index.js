@@ -624,10 +624,10 @@ app.post('/update-status', (req, res) => {
         };
 
         const sendCompletionEmail = (ownerId) => {
-            const ownerQuery = 'SELECT email FROM owner WHERE id = ?';
+            const ownerQuery = 'SELECT email FROM Owner WHERE id = ?';
             db.query(ownerQuery, [ownerId], (err, results) => {
                 if (err) {
-                    console.error('Error fetching owner email:', err);
+                    console.error('Error fetching Owner email:', err);
                     return res.status(500).send('Server error');
                 }
 
