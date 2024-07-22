@@ -15,7 +15,7 @@ const app=express()
 app.use(bodyParser.json());
 
 const corsOptions = {
-    origin: ' https://aravindhacker.github.io/VehicleServiceTrack/', 
+    origin: 'https://aravindhacker.github.io', // Match the exact URL
     methods: ['GET', 'POST'],
     allowedHeaders: ['Content-Type', 'Authorization']
 };
