@@ -619,7 +619,7 @@ app.post('/update-status', (req, res) => {
                     console.log('Status updated successfully');
 
                     if (status === 'completed') {
-                        sendCompletionEmail(ownerId);
+                        sendCompletionEmail(ownerId, serviceId);
                     }
 
                     res.status(200).send('Status updated successfully');
@@ -627,32 +627,49 @@ app.post('/update-status', (req, res) => {
             }
         };
 
-        const sendCompletionEmail = (ownerId) => {
+        const sendCompletionEmail = (ownerId, serviceId) => {
+            // Fetch the owner's email and service details
             const ownerQuery = 'SELECT email FROM Owner WHERE id = ?';
-            db.query(ownerQuery, [ownerId], (err, results) => {
+            db.query(ownerQuery, [ownerId], (err, ownerResults) => {
                 if (err) {
                     console.error('Error fetching Owner email:', err);
                     return res.status(500).send('Server error');
                 }
 
-                if (results.length === 0) {
+                if (ownerResults.length === 0) {
                     console.error('Owner not found');
                     return res.status(404).send('Owner not found');
                 }
 
-                const ownerEmail = results[0].email;
-                sendEmail(ownerEmail);
+                const ownerEmail = ownerResults[0].email;
+
+                // Fetch service details
+                const serviceQuery = 'SELECT * FROM Services WHERE id = ?'; // Replace with your actual service table and query
+                db.query(serviceQuery, [serviceId], (err, serviceResults) => {
+                    if (err) {
+                        console.error('Error fetching service details:', err);
+                        return res.status(500).send('Server error');
+                    }
+
+                    if (serviceResults.length === 0) {
+                        console.error('Service not found');
+                        return res.status(404).send('Service not found');
+                    }
+
+                    const serviceDetails = serviceResults[0];
+                    sendEmail(ownerEmail, serviceDetails);
+                });
             });
         };
 
-        const sendEmail = (recipientEmail) => {
+        const sendEmail = (recipientEmail, serviceDetails) => {
             const transporter = nodemailer.createTransport({
                 service: 'gmail',
-                port: 534,
+                port: 465, // Correct port for SSL
                 secure: true,
                 auth: {
-                  user: 'malotharavind16@gmail.com',
-                  pass: 'nglu mxzz lprz pnwp'
+                    user: 'malotharavind16@gmail.com',
+                    pass: 'nglu mxzz lprz pnwp'
                 }
             });
 
@@ -660,7 +677,7 @@ app.post('/update-status', (req, res) => {
                 from: 'malotharavind16@gmail.com',
                 to: recipientEmail,
                 subject: 'Service Completed',
-                text:  `
+                text: `
                 Dear Owner,
 
                 Your service request has been completed. Please pick up your vehicle at your earliest convenience.
@@ -673,9 +690,7 @@ app.post('/update-status', (req, res) => {
 
                 We hope you are satisfied with our service.
                 Thank you for choosing our service!
-
-            `
-
+                `
             };
 
             transporter.sendMail(mailOptions, (err, info) => {
