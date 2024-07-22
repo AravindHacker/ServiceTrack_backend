@@ -455,7 +455,7 @@ app.post('/appointments', (req, res) => {
                 }
                 
                 // Fetch user's email from corresponding table
-                const userTable = userType === 'owner' ? 'Owner' : 'Providers';
+                const userTable = userType === 'Owner' ? 'Owner' : 'providers';
                 getEmailById(userId, userTable, (err, userEmail) => {
                     if (err) {
                         console.error(err);
@@ -490,9 +490,9 @@ app.post('/appointments', (req, res) => {
                 Please ensure you are prepared for the service.
             `;
     
-            createReminderAndSendEmail(ownerId, 'owner', ownerMessage);
+            createReminderAndSendEmail(ownerId, 'Owner', ownerMessage);
             
-            createReminderAndSendEmail(providerId, 'provider', providerMessage);
+            createReminderAndSendEmail(providerId, 'providers', providerMessage);
     
 
         res.status(200).send('Appointment and reminders created successfully');
@@ -644,7 +644,7 @@ app.post('/update-status', (req, res) => {
         const sendEmail = (recipientEmail) => {
             const transporter = nodemailer.createTransport({
                 service: 'gmail',
-                port: 534, // or 465 for secure SMTP
+                port: 534,
                 secure: true,
                 auth: {
                   user: 'malotharavind16@gmail.com',
