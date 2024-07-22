@@ -14,8 +14,13 @@ const app=express()
 
 app.use(bodyParser.json());
 
-app.use(cors());
+const corsOptions = {
+    origin: ' https://aravindhacker.github.io/VehicleServiceTrack/', 
+    methods: ['GET', 'POST'],
+    allowedHeaders: ['Content-Type', 'Authorization']
+};
 
+app.use(cors(corsOptions));
 
 
 const secretKey = 'mysecreatejwttokenkey'; 
@@ -467,7 +472,6 @@ app.post('/appointments', (req, res) => {
             });
         };
 
-              r
                 const ownerMessage = `
                 Dear Owner,
                 This is a reminder for your upcoming appointment.
