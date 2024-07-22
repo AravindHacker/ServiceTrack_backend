@@ -13,7 +13,13 @@ const port = process.env.PORT || 3006;
 const app=express()
 
 app.use(bodyParser.json());
-app.use(cors());
+
+//app.use(cors());
+
+app.use(cors({
+    origin: ' https://aravindhacker.github.io/VehicleServiceTrack/' 
+}));
+
 const secretKey = 'mysecreatejwttokenkey'; 
 
 
@@ -463,11 +469,33 @@ app.post('/appointments', (req, res) => {
             });
         };
 
-        // Create reminder and send email to owner
-        createReminderAndSendEmail(ownerId, 'owner', 'Your appointment is in 24 hours');
-        
-        // Create reminder and send email to provider
-        createReminderAndSendEmail(providerId, 'provider', 'Your appointment is in 24 hours');
+              r
+                const ownerMessage = `
+                Dear Owner,
+                This is a reminder for your upcoming appointment.
+                Appointment Date: ${appointmentDate}
+                Appointment Time: ${appointmentTime}
+                Service Details: ${serviceDetails}
+                Vehicle: ${vehicleMake} ${vehicleModel} (License Plate: ${licensePlate})
+                Service Type: ${serviceType}
+                Please ensure your vehicle is ready for the service.
+            `;
+    
+            const providerMessage = `
+                Dear Provider,
+                This is a reminder for an upcoming appointment.
+                Appointment Date: ${appointmentDate}
+                Appointment Time: ${appointmentTime}
+                Service Details: ${serviceDetails}
+                Vehicle: ${vehicleMake} ${vehicleModel} (License Plate: ${licensePlate})
+                Service Type: ${serviceType}
+                Please ensure you are prepared for the service.
+            `;
+    
+            createReminderAndSendEmail(ownerId, 'owner', ownerMessage);
+            
+            createReminderAndSendEmail(providerId, 'provider', providerMessage);
+    
 
         res.status(200).send('Appointment and reminders created successfully');
     });
@@ -630,7 +658,22 @@ app.post('/update-status', (req, res) => {
                 from: 'malotharavind16@gmail.com',
                 to: recipientEmail,
                 subject: 'Service Completed',
-                text: 'Your service request has been completed. Please picup your vehicel.'
+                text:  `
+                Dear Owner,
+
+                Your service request has been completed. Please pick up your vehicle at your earliest convenience.
+
+                Service Details:
+                - Service ID: ${serviceDetails.id}
+                - Service Type: ${serviceDetails.service_type}
+                - Vehicle: ${serviceDetails.vehicle_make} ${serviceDetails.vehicle_model} (License Plate: ${serviceDetails.license_plate})
+                - Service Description: ${serviceDetails.description}
+
+                We hope you are satisfied with our service.
+                Thank you for choosing our service!
+
+            `
+
             };
 
             transporter.sendMail(mailOptions, (err, info) => {
@@ -647,6 +690,9 @@ app.post('/update-status', (req, res) => {
 });
 
 
+
+
+//----------------------------------------------------------------------------------------------
 app.get('/All-update-status',(req,res)=>{
     db.query('SELECT * FROM service_status_updates',(err,results)=>{
         if(err){
