@@ -15,11 +15,12 @@ const app=express()
 app.use(bodyParser.json());
 
 const corsOptions = {
-    origin: 'https://aravindhacker.github.io', // Match the exact URL
+    origin: 'https://aravindhacker.github.io', 
     methods: ['GET', 'POST'],
+    optionsSuccessStatus: 200,
     allowedHeaders: ['Content-Type', 'Authorization']
 };
-
+ 
 app.use(cors(corsOptions));
 
 
